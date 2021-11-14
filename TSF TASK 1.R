@@ -8,6 +8,7 @@ View(TSF_TASK_1)
 #GRAPH
 plot(TSF_TASK_1$Hours,TSF_TASK_1$Scores, main="Percentage Scores Vs Hours Studied",
      xlab="Hours studied", ylab="Percentage Scores")
+#PREDICTION USING LINEAR REGRESSION MODEL (Using whole data set)
 linmod = lm(Scores ~ Hours, data = TSF_TASK_1)
 summary(linmod)
 abline(linmod, col= "red") #Fitting regression line
