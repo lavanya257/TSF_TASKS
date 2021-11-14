@@ -1,0 +1,124 @@
+---
+title: "Superstore Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(plotly)
+library(tidyverse)
+ssdata <- read.csv("C:\\Users\\user\\Downloads\\SampleSuperstore.csv")
+ssdatanew <- ssdata %>% distinct()
+maxSales <- max(ssdatanew$Sales)
+ssdatanew$Sales <- replace(ssdatanew$Sales, ssdatanew$Sales==maxSales, mean(ssdatanew$Sales))
+ssdatanew <- ssdatanew %>% select(-c(Country, Postal.Code))
+```
+
+Row {data-width=350}
+-----------------------------------------------------------------------
+### Sales and Quantity for different shipment modes
+
+```{r}
+p <- ggplot(data = ssdatanew, aes(x = Quantity, y = Sales, fill = Ship.Mode) )+ geom_bar(stat = "identity") 
+ggplotly(p)
+
+```
+
+>Most of the sales have been triggered by the standard class of shipment mode.
+
+### Profit and Sales for different shipment modes
+
+```{r}
+p1 <- ggplot(data = ssdatanew, aes(x = Sales, y = Profit, color = Ship.Mode)) + geom_point()
+ggplotly(p1)
+
+
+```
+
+>More profits have been availed from the standard shipment class, but the range of profits remain low.
+
+Row {data-width=350}
+-----------------------------------------------------------------------
+
+### Sales and Discount for different shipment modes
+
+```{r}
+p2 <- ggplot() + geom_point(data = ssdatanew, aes(x = Discount, y = Sales, color = Ship.Mode)) 
+ggplotly(p2)
+
+```
+
+
+### Profits and Discount for different shipment modes
+
+```{r}
+p3 <- ggplot() + geom_bar(data = ssdatanew, aes(x = Discount, y = Profit, fill = Ship.Mode), stat = "identity") 
+ggplotly(p3)
+
+```
+
+>Products with no discounts show high range of profits, but as the discount range increases, more loss and less profit can be seen.
+
+
+Row {data-width=650}
+-----------------------------------------------------------------------
+### Profits for different Subcategories
+
+```{r}
+p4 <-ggplot() + geom_bar(data = ssdatanew, aes(x = Sub.Category, y = Profit, fill = Region), stat = "identity") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+ggplotly(p4)
+
+```
+
+>Most losses have been incurred by the Binders sub category mainly in the Central region. Machines and Tables sub categories also show substantial losses.
+
+Row {data-width=225}
+-----------------------------------------------------------------------
+### Profits And Sales sorted by Categories  
+
+```{r}
+p7 <- ggplot() + geom_point(data = ssdatanew, aes(x = Sales, y = Profit, color = Category)) 
+ggplotly(p7)
+```
+
+>For all categories the points cluster around the same area. So sales to profit ratio is almost same across categories except for few data points.
+
+
+### Sales sorted by Categories and Regions 
+
+```{r}
+p5 <- ggplot() + geom_bar(data = ssdatanew, aes(x = Category, y = Sales, fill = Region), stat = "identity") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+ggplotly(p5)
+
+```
+
+>Most Sales have been made by the Technology Industry, followed by Furniture and Office supplies industry. Majorly sales have been made in the West and East regions.
+
+### Profits sorted by Categories and Regions 
+
+```{r}
+p6 <- ggplot() + geom_bar(data = ssdatanew, aes(x = Category, y = Profit, fill = Region), stat = "identity") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+ggplotly(p6)
+
+```
+
+>The Furniture Industry incurred most losses followed by Office Supplies and Technology Industry.
+
+Row {data-width=350}
+-----------------------------------------------------------------------
+
+### Analysis
+
+1. If Same day shipment mode receives more discounts it can trigger sales and profits. 
+
+2. Discounts should be based on sales, otherwise unnecessary discounts with low sales can witness huge losses.
+
+3. Binders, Machines and Tables sub category are lagging behind and should be focused upon more to strengthen them.
+
+4. Office Supplies and the Furniture industries do not seem to boom in the Central Region (as can be seen by quite large losses).
+
+
